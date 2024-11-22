@@ -6,24 +6,27 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
-public class TaskEntitiy {
+@Table(name = "task")
+public class TaskEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    @Column(name = "title", nullable = false)
     private String title;
+    @Column(name = "description")
     private String description;
+    @Column(name = "deadline")
     private LocalDate deadline;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userEntity;
 
-    public TaskEntitiy() {
+    public TaskEntity() {
     }
 
-    public TaskEntitiy(Long id, String title, String description, LocalDate deadline, UserEntity userEntity) {
+    public TaskEntity(Long id, String title, String description, LocalDate deadline, UserEntity userEntity) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -75,7 +78,7 @@ public class TaskEntitiy {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TaskEntitiy that = (TaskEntitiy) o;
+        TaskEntity that = (TaskEntity) o;
         return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(deadline, that.deadline) && Objects.equals(userEntity, that.userEntity);
     }
 

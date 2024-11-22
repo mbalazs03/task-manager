@@ -1,12 +1,14 @@
 package com.example.taskify.data.repository;
 
-import com.example.taskify.data.entity.TaskEntitiy;
+import com.example.taskify.data.entity.TaskEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface TaskRepository extends JpaRepository<TaskEntitiy, Long> {
+@Repository
+public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
 
-    List<TaskEntitiy> findByUserId(Long userId);
+    List<TaskEntity> findByUserEntity_Id(Long userId);
 
 }
