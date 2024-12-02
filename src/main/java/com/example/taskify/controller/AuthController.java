@@ -10,10 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +37,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Username already exists");
         }
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        userEntity.setRole("USER");  // Set default role
+        userEntity.setRole("USER");
         userRepository.save(userEntity);
         return ResponseEntity.ok("User registered successfully!");
     }
@@ -60,5 +57,16 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Invalid username or password");
         }
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            jwtUtils.invalidateToken(token);
+            return ResponseEntity.ok("Logged out successfully");
+        }
+        return ResponseEntity.badRequest().body("Invalid token");
+    }
+
 }
 

@@ -1,60 +1,113 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Container,
+  Button,
+  List,
+  Box,
+  IconButton,
+  useTheme,
+} from "@mui/material";
+import { Logout, Add } from "@mui/icons-material";
 import api from "../../services/api";
+import TaskItem from "./TaskItem";
+import TaskForm from "./TaskForm";
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState("");
+  const [isAddDialogOpen, setAddDialogOpen] = useState(false);
+  const navigate = useNavigate();
+  const theme = useTheme();
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await api.get("/tasks");
-        setTasks(response.data);
-      } catch (err) {
-        console.error("Error fetching tasks:", err);
-      }
-    };
-    fetchTasks();
-  }, []);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    } else {
+      fetchTasks();
+    }
+  }, [navigate]);
 
-  const handleAddTask = async () => {
+  const fetchTasks = async () => {
     try {
-      const response = await api.post("/tasks", { title: newTask });
-      setTasks([...tasks, response.data]);
-      setNewTask("");
+      const response = await api.get("/tasks");
+      setTasks(response.data);
+    } catch (err) {
+      console.error("Error fetching tasks:", err);
+    }
+  };
+
+  const handleAddTask = async (newTask) => {
+    try {
+      await api.post("/tasks", newTask);
+      fetchTasks();
+      setAddDialogOpen(false);
     } catch (err) {
       console.error("Error adding task:", err);
     }
   };
 
-  const handleDeleteTask = async (taskId) => {
-    try {
-      await api.delete(`/tasks/${taskId}`);
-      setTasks(tasks.filter((task) => task.id !== taskId));
-    } catch (err) {
-      console.error("Error deleting task:", err);
-    }
-  };
+  const handleUpdateTaskList = () => fetchTasks();
+
+  const handleLogout = async () => {
+      try {
+        await api.post("/auth/logout");
+        alert("You have logged out successfully!");
+        localStorage.removeItem("token");
+        window.location.href = "/";
+      } catch (err) {
+        console.error("Error logging out:", err);
+      }
+    };
 
   return (
-    <div>
-      <h1>Task List</h1>
-      <input
-        type="text"
-        value={newTask}
-        onChange={(e) => setNewTask(e.target.value)}
-        placeholder="New Task"
+    <Box>
+      <AppBar position="static" sx={{ bgcolor: theme.palette.primary.main }}>
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Task List
+          </Typography>
+          <IconButton color="inherit" onClick={handleLogout}>
+            <Logout />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
+      <Container sx={{ marginTop: 4 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <Typography variant="h5" fontWeight="bold">
+            Your Tasks
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => setAddDialogOpen(true)}
+          >
+            Add Task
+          </Button>
+        </Box>
+
+        <List>
+          {tasks.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              onUpdate={handleUpdateTaskList}
+              onDelete={handleUpdateTaskList}
+            />
+          ))}
+        </List>
+      </Container>
+
+      <TaskForm
+        open={isAddDialogOpen}
+        onClose={() => setAddDialogOpen(false)}
+        onSave={handleUpdateTaskList}
       />
-      <button onClick={handleAddTask}>Add Task</button>
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id}>
-            {task.title}
-            <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    </Box>
   );
 };
 

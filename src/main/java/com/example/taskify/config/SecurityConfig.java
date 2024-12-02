@@ -9,12 +9,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -29,13 +31,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**")
-                        .ignoringRequestMatchers("/api/auth/**")
+                        .ignoringRequestMatchers("/h2-console/**", "/api/auth/**")
                         .disable())
-                .headers(AbstractHttpConfigurer::disable) // This is needed for H2 console
+                .cors(cors -> cors.configurationSource(request -> {
+                    var corsConfiguration = new CorsConfiguration();
+                    corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+                    corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+                    corsConfiguration.setAllowedHeaders(List.of("*"));
+                    corsConfiguration.setAllowCredentials(true);
+                    return corsConfiguration;
+                }))
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/h2-console/**", "/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

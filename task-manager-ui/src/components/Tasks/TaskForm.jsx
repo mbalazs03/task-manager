@@ -1,16 +1,25 @@
 import React, { useState } from "react";
 import axios from "axios";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Button,
+  Box,
+} from "@mui/material";
 
-const TaskForm = ({ task = {}, onSave }) => {
+const TaskForm = ({ task = {}, onSave, open, onClose }) => {
   const [title, setTitle] = useState(task.title || "");
   const [description, setDescription] = useState(task.description || "");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
+
     try {
       if (task.id) {
-        // Edit task
         await axios.put(`http://localhost:8080/api/tasks/${task.id}`, {
           title,
           description,
@@ -18,7 +27,6 @@ const TaskForm = ({ task = {}, onSave }) => {
           headers: { Authorization: `Bearer ${token}` },
         });
       } else {
-        // Create task
         await axios.post("http://localhost:8080/api/tasks", {
           title,
           description,
@@ -33,26 +41,39 @@ const TaskForm = ({ task = {}, onSave }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Title</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label>Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        ></textarea>
-      </div>
-      <button type="submit">{task.id ? "Update" : "Create"} Task</button>
-    </form>
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>{task.id ? "Edit Task" : "Create Task"}</DialogTitle>
+      <DialogContent>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <TextField
+            label="Title"
+            variant="outlined"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            fullWidth
+            required
+          />
+          <TextField
+            label="Description"
+            variant="outlined"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            fullWidth
+            required
+            multiline
+            minRows={4}
+          />
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="secondary">
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit} color="primary">
+          {task.id ? "Update" : "Create"} Task
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

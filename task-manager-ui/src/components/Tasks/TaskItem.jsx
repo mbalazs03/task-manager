@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { Card, CardContent, Typography, Button, CardActions, Box } from "@mui/material";
 import TaskForm from "./TaskForm";
 
 const TaskItem = ({ task, onUpdate, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleEdit = () => setIsEditing(!isEditing);
+  const handleEditToggle = () => setIsEditing(!isEditing);
+
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -18,24 +21,34 @@ const TaskItem = ({ task, onUpdate, onDelete }) => {
   };
 
   return (
-    <li>
-      {isEditing ? (
+    <Card variant="outlined" sx={{ mb: 2 }}>
+      <CardContent>
+        <Typography variant="h6">{task.title}</Typography>
+        <Typography variant="body2" color="textSecondary">
+          {task.description}
+        </Typography>
+      </CardContent>
+      <CardActions>
+        <Button variant="outlined" color="primary" onClick={handleEditToggle}>
+          Edit
+        </Button>
+        <Button variant="outlined" color="error" onClick={handleDelete}>
+          Delete
+        </Button>
+      </CardActions>
+
+      {isEditing && (
         <TaskForm
+          open={isEditing}
           task={task}
+          onClose={handleEditToggle}
           onSave={() => {
             setIsEditing(false);
             onUpdate();
           }}
         />
-      ) : (
-        <div>
-          <h3>{task.title}</h3>
-          <p>{task.description}</p>
-          <button onClick={handleEdit}>Edit</button>
-          <button onClick={handleDelete}>Delete</button>
-        </div>
       )}
-    </li>
+    </Card>
   );
 };
 
