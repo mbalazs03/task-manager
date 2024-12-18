@@ -1,7 +1,6 @@
 package com.example.taskify.data.entity;
 
 import jakarta.persistence.*;
-
 import java.util.Objects;
 
 @Entity
@@ -11,7 +10,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
     @Column(name = "password", nullable = false)
     private String password;
@@ -58,6 +57,10 @@ public class UserEntity {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isAdmin() {
+        return "ADMIN".equals(this.role);
     }
 
     @Override

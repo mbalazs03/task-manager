@@ -42,6 +42,17 @@ public class AuthController {
         return ResponseEntity.ok("User registered successfully!");
     }
 
+    @PostMapping("/register/admin")
+    public ResponseEntity<?> registerAdmin(@RequestBody UserEntity userEntity) {
+        if (userRepository.findByUsername(userEntity.getUsername()) != null) {
+            return ResponseEntity.badRequest().body("Username already exists");
+        }
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+        userEntity.setRole("ADMIN");
+        userRepository.save(userEntity);
+        return ResponseEntity.ok("Admin registered successfully!");
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserEntity userEntity) {
         try {
