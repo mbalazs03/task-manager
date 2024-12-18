@@ -8,12 +8,15 @@ import {
   Typography,
   Paper,
   Alert,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import api from "../../services/api";
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -25,6 +28,7 @@ const Register = () => {
       await api.post("/auth/register", {
         username,
         password,
+        role: isAdmin ? "ADMIN" : "USER",
       });
       alert("Registration successful! Please log in.");
       navigate("/");
@@ -69,6 +73,17 @@ const Register = () => {
             required
             sx={{ mb: 3 }}
           />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isAdmin}
+                onChange={(e) => setIsAdmin(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Register as Admin"
+            sx={{ mb: 2 }}
+          />
           <Button
             type="submit"
             variant="contained"
@@ -88,3 +103,4 @@ const Register = () => {
 };
 
 export default Register;
+

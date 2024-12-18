@@ -11,7 +11,7 @@ import {
   IconButton,
   useTheme,
 } from "@mui/material";
-import { Logout, Add } from "@mui/icons-material";
+import { Logout, Add, SupervisorAccount } from "@mui/icons-material";
 import api from "../../services/api";
 import TaskItem from "./TaskItem";
 import TaskForm from "./TaskForm";
@@ -19,14 +19,17 @@ import TaskForm from "./TaskForm";
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
   const [isAddDialogOpen, setAddDialogOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("userRole");
     if (!token) {
       navigate("/login");
     } else {
+      setIsAdmin(userRole === "ADMIN");
       fetchTasks();
     }
   }, [navigate]);
@@ -53,15 +56,16 @@ const TaskList = () => {
   const handleUpdateTaskList = () => fetchTasks();
 
   const handleLogout = async () => {
-      try {
-        await api.post("/auth/logout");
-        alert("You have logged out successfully!");
-        localStorage.removeItem("token");
-        window.location.href = "/";
-      } catch (err) {
-        console.error("Error logging out:", err);
-      }
-    };
+    try {
+      await api.post("/auth/logout");
+      alert("You have logged out successfully!");
+      localStorage.removeItem("token");
+      localStorage.removeItem("userRole");
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Error logging out:", err);
+    }
+  };
 
   return (
     <Box>
@@ -70,6 +74,11 @@ const TaskList = () => {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Task List
           </Typography>
+          {isAdmin && (
+            <IconButton color="inherit" onClick={() => navigate("/admin")}>
+              <SupervisorAccount />
+            </IconButton>
+          )}
           <IconButton color="inherit" onClick={handleLogout}>
             <Logout />
           </IconButton>
@@ -97,6 +106,7 @@ const TaskList = () => {
               task={task}
               onUpdate={handleUpdateTaskList}
               onDelete={handleUpdateTaskList}
+              isAdmin={isAdmin}
             />
           ))}
         </List>
@@ -112,3 +122,4 @@ const TaskList = () => {
 };
 
 export default TaskList;
+
