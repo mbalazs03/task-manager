@@ -1,6 +1,5 @@
 package com.example.taskify.controller;
 
-import com.example.taskify.data.entity.TaskEntity;
 import com.example.taskify.data.entity.UserEntity;
 import com.example.taskify.data.repository.TaskRepository;
 import com.example.taskify.data.repository.UserRepository;

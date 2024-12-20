@@ -23,7 +23,9 @@ const TaskItem = ({ task, username, onUpdate, onDelete, isAdmin }) => {
   return (
     <Card variant="outlined" sx={{ mb: 2 }}>
       <CardContent>
-        <Typography variant="h6">{isAdmin && <span><strong>Assigned to:</strong> {task.username || "Unassigned"}</span>}</Typography>
+        <Typography variant="h6">
+            <strong>Assigned to:</strong> {task.userEntity?.username || "Unassigned"}
+        </Typography>
         <Typography variant="h6">{task.title}</Typography>
         <Typography variant="body2" color="textSecondary">
           {task.description}

@@ -1,5 +1,6 @@
 package com.example.taskify.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public class TaskEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"tasks", "password", "roles"})
     private UserEntity userEntity;
 
     public TaskEntity() {
