@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ThemeToggle from "../ThemeToggle";
 import {
   AppBar,
   Toolbar,
@@ -22,6 +23,12 @@ const TaskList = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
+  const [isDark, setIsDark] = useState(false); // Added useState for dark mode
+
+  const toggleDarkMode = () => { // Added toggleDarkMode function
+      setIsDark(!isDark);
+      document.documentElement.classList.toggle('dark');
+    };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,7 +46,7 @@ const TaskList = () => {
     try {
       const endpoint = isAdmin ? "/admin/tasks" : "/tasks";
       const response = await api.get(endpoint);
-      setTasks(response.data); // Each task now includes "username" for admins
+      setTasks(response.data);
     } catch (err) {
       console.error("Error fetching tasks:", err);
     }
@@ -108,6 +115,7 @@ const TaskList = () => {
                 Go to Admin Page
               </Button>
             )}
+          <ThemeToggle isDark={isDark} onToggle={toggleDarkMode} />
             <Button
               variant="contained"
               startIcon={<Add />}

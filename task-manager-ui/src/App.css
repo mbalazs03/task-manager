@@ -36,3 +36,41 @@
     transform: rotate(360deg);
   }
 }
+
+/* Dark mode styles */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #121212;
+  color: #fff;
+}
+
+.dark .MuiPaper-root {
+  background-color: #242424;
+  color: #fff;
+}
+
+.dark .MuiAppBar-root {
+  background-color: #1e1e1e;
+}
+
+.dark .MuiTableCell-root {
+  color: #fff;
+}
+
+.dark .MuiButton-outlined {
+  border-color: rgba(255, 255, 255, 0.23);
+  color: #fff;
+}
+
+.dark .MuiButton-contained {
+  background-color: #90caf9;
+  color: #000;
+}
+
+.dark .MuiSelect-icon {
+  color: #fff;
+}
+

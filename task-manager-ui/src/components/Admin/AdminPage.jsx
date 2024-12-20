@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import ThemeToggle from "../ThemeToggle";
 import {
   Container,
   Typography,
@@ -24,6 +25,12 @@ const AdminPage = () => {
   const [error, setError] = useState(null);
   const { userRole, authToken } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [isDark, setIsDark] = useState(false);
+
+  const toggleDarkMode = () => {
+      setIsDark(!isDark);
+      document.documentElement.classList.toggle('dark');
+    };
 
   useEffect(() => {
     if (userRole !== "ADMIN") {
@@ -78,11 +85,11 @@ const AdminPage = () => {
     try {
       await api.put(
         `/admin/users/${userId}/role`,
-        newRole,  // Send newRole directly as the request body
+        newRole,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
-            'Content-Type': 'text/plain'  // Change content type to text/plain
+            'Content-Type': 'text/plain'
           }
         }
       );
@@ -111,6 +118,7 @@ const AdminPage = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         Admin Dashboard
       </Typography>
+      <ThemeToggle isDark={isDark} onToggle={toggleDarkMode} />
 
       <Box sx={{ mb: 4 }}>
         <Typography variant="h5" component="h2" gutterBottom>
