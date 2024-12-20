@@ -3,7 +3,7 @@ import axios from "axios";
 import { Card, CardContent, Typography, Button, CardActions, Box } from "@mui/material";
 import TaskForm from "./TaskForm";
 
-const TaskItem = ({ task, onUpdate, onDelete }) => {
+const TaskItem = ({ task, username, onUpdate, onDelete, isAdmin }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleEditToggle = () => setIsEditing(!isEditing);
@@ -23,6 +23,7 @@ const TaskItem = ({ task, onUpdate, onDelete }) => {
   return (
     <Card variant="outlined" sx={{ mb: 2 }}>
       <CardContent>
+        <Typography variant="h6">{isAdmin && <p><strong>Assigned to:</strong> {username || "Unassigned"}</p>}</Typography>
         <Typography variant="h6">{task.title}</Typography>
         <Typography variant="body2" color="textSecondary">
           {task.description}

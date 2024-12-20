@@ -24,17 +24,17 @@ const Login = () => {
     setError(null);
 
     try {
-      const response = await api.post("/auth/login", {
-        username,
-        password,
-      });
+      const response = await api.post("/auth/login", { username, password });
+      console.log("Login Response:", response.data); // Debug log
       auth.setAuthToken(response.data.token);
-      auth.setUserRole(response.data.role);
+      auth.setUserRole(response.data.role); // Store role in context
+      localStorage.setItem("token", response.data.token); // Store token
+      localStorage.setItem("userRole", response.data.role); // Store role
       alert("Login successful!");
       navigate("/tasks");
     } catch (err) {
-      console.error(err);
-      setError("Invalid username or password. Please try again.");
+      console.error("Login Error:", err);
+      setError(err.response?.data?.message || "Invalid username or password. Please try again.");
     }
   };
 
@@ -92,4 +92,3 @@ const Login = () => {
 };
 
 export default Login;
-

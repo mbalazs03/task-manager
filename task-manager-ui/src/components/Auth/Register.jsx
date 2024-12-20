@@ -34,7 +34,7 @@ const Register = () => {
       navigate("/");
     } catch (err) {
       console.error(err);
-      setError("Registration failed. Username may already exist.");
+      setError(err.response?.data?.message || "Registration failed. Username may already exist.");
     }
   };
 
@@ -103,4 +103,3 @@ const Register = () => {
 };
 
 export default Register;
-

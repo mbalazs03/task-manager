@@ -26,6 +26,7 @@ const TaskList = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("userRole");
+    console.log("userRole:", userRole); // Debugging
     if (!token) {
       navigate("/login");
     } else {
@@ -36,8 +37,9 @@ const TaskList = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await api.get("/tasks");
-      setTasks(response.data);
+      const endpoint = isAdmin ? "/admin/tasks" : "/tasks";
+      const response = await api.get(endpoint);
+      setTasks(response.data); // Each task now includes "username" for admins
     } catch (err) {
       console.error("Error fetching tasks:", err);
     }
@@ -67,6 +69,10 @@ const TaskList = () => {
     }
   };
 
+   if (isAdmin === null) {
+     return <div>Loading...</div>; // Wait until isAdmin is determined
+   }
+
   return (
     <Box>
       <AppBar position="static" sx={{ bgcolor: theme.palette.primary.main }}>
@@ -90,13 +96,26 @@ const TaskList = () => {
           <Typography variant="h5" fontWeight="bold">
             Your Tasks
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => setAddDialogOpen(true)}
-          >
-            Add Task
-          </Button>
+          <Box>
+            {isAdmin && (
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => navigate("/admin")}
+                sx={{ marginRight: 2 }}
+                startIcon={<SupervisorAccount />}
+              >
+                Go to Admin Page
+              </Button>
+            )}
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              onClick={() => setAddDialogOpen(true)}
+            >
+              Add Task
+            </Button>
+          </Box>
         </Box>
 
         <List>
@@ -104,8 +123,8 @@ const TaskList = () => {
             <TaskItem
               key={task.id}
               task={task}
-              onUpdate={handleUpdateTaskList}
-              onDelete={handleUpdateTaskList}
+              onUpdate={fetchTasks}
+              onDelete={fetchTasks}
               isAdmin={isAdmin}
             />
           ))}
@@ -115,7 +134,7 @@ const TaskList = () => {
       <TaskForm
         open={isAddDialogOpen}
         onClose={() => setAddDialogOpen(false)}
-        onSave={handleUpdateTaskList}
+        onSave={fetchTasks}
       />
     </Box>
   );

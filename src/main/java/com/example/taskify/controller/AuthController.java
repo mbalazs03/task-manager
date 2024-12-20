@@ -37,7 +37,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Username already exists");
         }
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        userEntity.setRole("USER");
+        userEntity.setRole("USER"); // Default role
         userRepository.save(userEntity);
         return ResponseEntity.ok("User registered successfully!");
     }
@@ -48,7 +48,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Username already exists");
         }
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        userEntity.setRole("ADMIN");
+        userEntity.setRole("ADMIN"); // Admin role
         userRepository.save(userEntity);
         return ResponseEntity.ok("Admin registered successfully!");
     }
@@ -60,9 +60,15 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(userEntity.getUsername(), userEntity.getPassword())
             );
             String token = jwtUtils.generateToken(userEntity.getUsername());
+            UserEntity loggedInUser = userRepository.findByUsername(userEntity.getUsername());
+            if (loggedInUser == null) {
+                return ResponseEntity.badRequest().body("User not found");
+            }
+
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
-            response.put("username", userEntity.getUsername());
+            response.put("username", loggedInUser.getUsername());
+            response.put("role", loggedInUser.getRole());
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
             return ResponseEntity.badRequest().body("Invalid username or password");
@@ -78,6 +84,4 @@ public class AuthController {
         }
         return ResponseEntity.badRequest().body("Invalid token");
     }
-
 }
-
