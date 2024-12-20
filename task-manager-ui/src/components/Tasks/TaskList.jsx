@@ -23,9 +23,9 @@ const TaskList = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
-  const [isDark, setIsDark] = useState(false); // Added useState for dark mode
+  const [isDark, setIsDark] = useState(false);
 
-  const toggleDarkMode = () => { // Added toggleDarkMode function
+  const toggleDarkMode = () => {
       setIsDark(!isDark);
       document.documentElement.classList.toggle('dark');
     };
@@ -33,7 +33,7 @@ const TaskList = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("userRole");
-    console.log("userRole:", userRole); // Debugging
+    console.log("userRole:", userRole);
     if (!token) {
       navigate("/login");
     } else {
@@ -77,7 +77,7 @@ const TaskList = () => {
   };
 
    if (isAdmin === null) {
-     return <div>Loading...</div>; // Wait until isAdmin is determined
+     return <div>Loading...</div>;
    }
 
   return (
@@ -87,23 +87,6 @@ const TaskList = () => {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Task List
           </Typography>
-          {isAdmin && (
-            <IconButton color="inherit" onClick={() => navigate("/admin")}>
-              <SupervisorAccount />
-            </IconButton>
-          )}
-          <IconButton color="inherit" onClick={handleLogout}>
-            <Logout />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-
-      <Container sx={{ marginTop: 4 }}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Typography variant="h5" fontWeight="bold">
-            Your Tasks
-          </Typography>
-          <Box>
             {isAdmin && (
               <Button
                 variant="outlined"
@@ -116,6 +99,18 @@ const TaskList = () => {
               </Button>
             )}
           <ThemeToggle isDark={isDark} onToggle={toggleDarkMode} />
+          <IconButton color="inherit" onClick={handleLogout}>
+            <Logout />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
+      <Container sx={{ marginTop: 4 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <Typography variant="h5" fontWeight="bold">
+            Your Tasks
+          </Typography>
+          <Box>
             <Button
               variant="contained"
               startIcon={<Add />}

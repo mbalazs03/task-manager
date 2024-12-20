@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { AuthProvider } from "./context/AuthContext";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
@@ -27,7 +29,9 @@ const App = () => {
             path="/tasks"
             element={
               <ProtectedRoute>
-                <TaskList />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <TaskList />
+                </LocalizationProvider>
               </ProtectedRoute>
             }
           />

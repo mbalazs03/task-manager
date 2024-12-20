@@ -54,7 +54,7 @@ public class TaskController {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
                     existingTask.setTitle(taskDetails.getTitle());
                     existingTask.setDescription(taskDetails.getDescription());
-                    taskDetails.setDeadline(existingTask.getDeadline());
+                    existingTask.setDeadline(taskDetails.getDeadline());
                     return ResponseEntity.ok(taskRepository.save(existingTask));
                 })
                 .orElse(ResponseEntity.notFound().build());

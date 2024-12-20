@@ -28,6 +28,11 @@ const TaskItem = ({ task, username, onUpdate, onDelete, isAdmin }) => {
         <Typography variant="body2" color="textSecondary">
           {task.description}
         </Typography>
+        {task.deadline && (
+          <Typography variant="body2" color="textSecondary">
+            <strong>Deadline:</strong> {new Date(task.deadline).toLocaleDateString()}
+          </Typography>
+        )}
       </CardContent>
       <CardActions>
         <Button variant="outlined" color="primary" onClick={handleEditToggle}>
