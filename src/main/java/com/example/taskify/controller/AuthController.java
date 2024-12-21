@@ -37,7 +37,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Username already exists");
         }
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        userEntity.setRole("USER"); // Default role
+        userEntity.setRole("USER");
         userRepository.save(userEntity);
         return ResponseEntity.ok("User registered successfully!");
     }
@@ -48,7 +48,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Username already exists");
         }
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        userEntity.setRole("ADMIN"); // Admin role
+        userEntity.setRole("ADMIN");
         userRepository.save(userEntity);
         return ResponseEntity.ok("Admin registered successfully!");
     }

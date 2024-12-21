@@ -4,6 +4,7 @@ import com.example.taskify.data.entity.UserEntity;
 import com.example.taskify.data.repository.TaskRepository;
 import com.example.taskify.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -64,6 +65,35 @@ public class AdminController {
 
         return ResponseEntity.ok(tasksWithUsers);
     }
+
+/*    @PutMapping("/tasks/{id}/reassign")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> reassignTask(@PathVariable Long taskId, @RequestBody Long userId) {
+        return taskRepository.findById(taskId)
+                .map(task -> userRepository.findById(userId)
+                        .map(user -> {
+                            task.setUserEntity(user);
+                            taskRepository.save(task);
+                            return ResponseEntity.ok().build();
+                        })
+                        .orElse(ResponseEntity.notFound().build()))
+                .orElse(ResponseEntity.notFound().build());
+    }*/
+
+    @PutMapping("/tasks/{taskId}/reassign")
+    public ResponseEntity<?> reassignTask(@PathVariable Long taskId, @RequestBody Map<String, Long> payload) {
+        Long userId = payload.get("userId");
+        return taskRepository.findById(taskId)
+                .map(task -> userRepository.findById(userId)
+                        .map(user -> {
+                            task.setUserEntity(user);
+                            taskRepository.save(task);
+                            return ResponseEntity.ok().build();
+                        })
+                        .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found")))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found"));
+    }
+
 
     @DeleteMapping("/tasks/{id}")
     public ResponseEntity<?> deleteTask(@PathVariable Long id) {

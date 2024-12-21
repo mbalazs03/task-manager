@@ -25,11 +25,11 @@ const Login = () => {
 
     try {
       const response = await api.post("/auth/login", { username, password });
-      console.log("Login Response:", response.data); // Debug log
+      console.log("Login Response:", response.data);
       auth.setAuthToken(response.data.token);
-      auth.setUserRole(response.data.role); // Store role in context
-      localStorage.setItem("token", response.data.token); // Store token
-      localStorage.setItem("userRole", response.data.role); // Store role
+      auth.setUserRole(response.data.role);
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userRole", response.data.role);
       alert("Login successful!");
       navigate("/tasks");
     } catch (err) {

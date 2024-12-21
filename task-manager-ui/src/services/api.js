@@ -38,4 +38,17 @@ export const fetchTasks = async () => {
   }
 };
 
+export const reassignTask = async (taskId, userId) => {
+  try {
+    console.log("Task ID:", taskId);
+    console.log("User ID:", userId);
+    const response = await api.put(`/admin/tasks/${taskId}/reassign`, { userId });
+    console.log("Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error reassigning task:', error);
+    throw error;
+  }
+};
+
 export default api;
